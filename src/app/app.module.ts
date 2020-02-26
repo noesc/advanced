@@ -8,16 +8,20 @@ import {MatTableModule} from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { UserListComponent } from './user-list/user-list.component';
 import {UsersService} from './users.service';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
+import { InternalServerComponent } from './error-pages/internal-server/internal-server.component';
+import {ErrorHandlerService} from './error-handler.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     UserListComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    InternalServerComponent
   ],
   imports: [
     BrowserModule,
@@ -28,9 +32,10 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    FormsModule
-  ],
-  providers: [UsersService],
+    FormsModule,
+    ReactiveFormsModule
+   ],
+  providers: [UsersService,ErrorHandlerService,{provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
