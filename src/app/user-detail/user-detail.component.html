@@ -1,8 +1,9 @@
 <div class="container">
+    <h3>User</h3>
     <form class="user-form">
 
-        <mat-form-field class="user-full-width" hidden>
-            <input matInput #UserId>
+        <mat-form-field class="user-full-width hidden">
+            <input matInput [formControl]="idFormControl" #UserId>
         </mat-form-field>
 
         <mat-form-field class="user-full-width">
@@ -37,7 +38,7 @@
 
         <mat-form-field class="user-full-width">
             <mat-label>Phone</mat-label>
-            <input matInput placeholder="Phone" #Phone>
+            <input matInput placeholder="Phone" [formControl]="phoneFormControl" #Phone>
         </mat-form-field>
         <button (click)="save(UserId.value, UserName.value, Name.value, Email.value, Phone.value)" mat-raised-button color="primary" type="submit">Save</button>
     </form>

@@ -4,8 +4,10 @@ import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/form
 import {ErrorStateMatcher} from '@angular/material/core';
 import { User } from '../user';
 import { ErrorHandlerService } from '../error-handler.service';
-import { Router } from '@angular/router';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { typeWithParameters } from '@angular/compiler/src/render3/util';
+import { Observable } from 'rxjs';
+import { error } from 'protractor';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
     
@@ -26,6 +28,8 @@ export class UserDetailComponent implements OnInit{
     public errorMessage: string = '';
     public message: string = '';
 
+    idFormControl = new FormControl('');
+
     emailFormControl = new FormControl('', [
         Validators.required,
         Validators.email,
@@ -37,22 +41,46 @@ export class UserDetailComponent implements OnInit{
         Validators.required
       ]);
     
-      matcher = new MyErrorStateMatcher();
+    phoneFormControl = new FormControl('');
 
-    constructor(private service : UsersService, private errorHandler: ErrorHandlerService, private router: Router){
+    matcher = new MyErrorStateMatcher();
+
+    constructor(private service : UsersService, private errorHandler: ErrorHandlerService, 
+      private router: Router, private route: ActivatedRoute){
     }
     
     ngOnInit(){
+      this.route.params.subscribe(params => {
+        if(params.id != 'undefined' && params.id){
+          this.loadUser(params.id);
+        }
+        
+      })
+    }
 
+    loadUser(id:number){
+      this.service.getUser(id)
+      .subscribe((data) =>{
+        this.idFormControl.setValue(data.userId);
+        this.userFormControl.setValue(data.userName);
+        this.nameFormControl.setValue(data.name);
+        this.emailFormControl.setValue(data.email);
+        this.phoneFormControl.setValue(data.phone);
+      },
+      (error => {
+        this.errorHandler.handleError(error);
+        this.errorMessage = this.errorHandler.errorMessage;
+      })
+      )
     }
 
     setData(userId, userName, name, eMail, phone):User{
       var user = new User();
-      user.UserId = userId;
-      user.UserName= userName;
-      user.Name = name;
-      user.Phone = phone;
-      user.Email = eMail;
+      user.userId = Number(userId);
+      user.userName= userName;
+      user.name = name;
+      user.phone = phone;
+      user.email = eMail;
       return user;
     }
 
@@ -61,7 +89,9 @@ export class UserDetailComponent implements OnInit{
       this.service.addUser(user)
       .subscribe(res => {
         this.message = "The user was created successfully";
-        alert(this.message);
+        if(confirm(this.message)){
+          this.redirectToList();
+        }
       },
       (error => {
         this.errorHandler.handleError(error);
@@ -74,7 +104,9 @@ export class UserDetailComponent implements OnInit{
       this.service.editUser(user)
       .subscribe(res => {
         this.message = "The user was edited successfully";
-        alert(this.message);
+        if(confirm(this.message)){
+          this.redirectToList();
+        }
       },
       (error => {
         this.errorHandler.handleError(error);
@@ -85,10 +117,11 @@ export class UserDetailComponent implements OnInit{
 
     save(userId, userName, name, eMail, phone){
       var user = this.setData(userId, userName, name, eMail, phone);
-      if(userId == null){
-        this.addUser(user);
-      }else{
+      if(typeof userId != 'undefined' && userId){
         this.editUser(user);
+      }else{
+        user.userId = null;
+        this.addUser(user);
       }
     }
 

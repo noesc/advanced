@@ -7,3 +7,10 @@
   .user-full-width {
     width: 100%;
   }
+
+  .hidden{
+    display: block;
+    visibility: hidden;
+    height: 0;
+    width: 0;
+}

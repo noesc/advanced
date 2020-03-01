@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   public deleteUser(userId:number){
-    return this.http.delete(`${this.uri}/delete?id=${userId}`,httpOptions);
+    return this.http.delete(`${this.uri}/delete/${userId}`,httpOptions);
   }
 
   public getUsers(): Observable<User[]>{  
@@ -35,6 +35,6 @@ export class UsersService {
   }
   
   public getUser(userId:number):Observable<User>{
-    return this.http.get<User>(`${this.uri}/get?id=${userId}`,httpOptions);
+    return this.http.get<User>(`${this.uri}/get/${userId}`,httpOptions);
   }
 }

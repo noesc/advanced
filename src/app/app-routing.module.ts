@@ -6,6 +6,7 @@ import {InternalServerComponent} from './error-pages/internal-server/internal-se
 const routes: Routes = [
   { path:'', component:UserListComponent },
   { path:'user/create', component:UserDetailComponent },
+  { path:'user/edit/:id', component:UserDetailComponent },
   { path: '500', component: InternalServerComponent },
   { path: '**', redirectTo: '/404', pathMatch: 'full'}
 ];
